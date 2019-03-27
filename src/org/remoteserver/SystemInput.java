@@ -4,6 +4,7 @@ import org.remoteserver.exceptions.RobotException;
 
 import java.awt.Robot;
 import java.awt.AWTException;
+import java.awt.AWTKeyStroke;
 import java.awt.event.InputEvent;
 
 
@@ -17,6 +18,10 @@ public class SystemInput {
 
     public enum MouseButton {
         LPM, PPM, SCROLL_WHEEL
+    }
+
+    public enum Shortcut {
+        CTRL_Z, CTRL_X, CTRL_C, CTRL_V, CTRL_A, CTRL_D, CTRL_Y, CTRL_S, CTRL_P, ALT_F4, WINDOWS_D, SHIFT_DELETE
     }
 
     /**
@@ -50,6 +55,34 @@ public class SystemInput {
             return true;
         } catch (IllegalArgumentException e) {
             return false;
+        }
+    }
+
+    /**
+     * Use shortcut from list
+     */
+    public void useShortcut(Shortcut shortcut) {
+        if(!isRobotInitialized()) return;
+
+        String[] keys = shortcut.name().toUpperCase().split("_");
+        if (keys[0].equals("CTRL")) keys[0] = "CONTROL";
+        int[] keyCodes = new int[keys.length];
+        for (int i = 0; i < keyCodes.length; i++) {
+            keyCodes[i] = AWTKeyStroke.getAWTKeyStroke(keys[i]).getKeyCode();
+        }
+        pressKeys(keyCodes);
+        releaseKeys(keyCodes);
+    }
+
+    private void pressKeys(int[] keys) {
+        for (int key : keys) {
+            robot.keyPress(key);
+        }
+    }
+
+    private void releaseKeys(int[] keys) {
+        for (int key : keys) {
+            robot.keyRelease(key);
         }
     }
 
