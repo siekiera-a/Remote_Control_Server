@@ -2,9 +2,7 @@ package org.remoteserver;
 
 import org.remoteserver.exceptions.RobotException;
 
-import java.awt.Robot;
-import java.awt.AWTException;
-import java.awt.AWTKeyStroke;
+import java.awt.*;
 import java.awt.event.InputEvent;
 
 
@@ -128,6 +126,14 @@ public class SystemInput {
             robot.mousePress(buttonKey);
             robot.mouseRelease(buttonKey);
         }
+    }
+
+    /**
+     * Moves mouse from current location by x, y
+     */
+    public void mouseMove(int x, int y) {
+        Point currentPosition = MouseInfo.getPointerInfo().getLocation();
+        robot.mouseMove(x + currentPosition.x,y + currentPosition.y);
     }
 
     private boolean isRobotInitialized() {
