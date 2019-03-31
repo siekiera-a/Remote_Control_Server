@@ -34,6 +34,15 @@ public class SystemControl {
         return shutdownCommand(new CmdParameter[] {parameter1, parameter2});
     }
 
+    public boolean lock() {
+        try {
+            runtime.exec("rundll32 user32.dll,LockWorkStation");
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private boolean shutdownCommand(CmdParameter[] parameters) {
         if (runtime != null && parameters.length > 0) {
             try {
