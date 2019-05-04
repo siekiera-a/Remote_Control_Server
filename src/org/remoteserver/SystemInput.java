@@ -44,8 +44,8 @@ public class SystemInput {
      @param keyCode Int from KeyEvent (e.g. KeyEvent.VK_A)
      @return true if keyCode is valid, false otherwise
     */
-    public boolean keyPress(int keyCode) {
-        if (!isRobotInitialized()) return false;
+    public boolean clickKey(int keyCode) {
+        if (robot == null) return false;
 
         try {
             robot.keyPress(keyCode);
@@ -60,7 +60,7 @@ public class SystemInput {
      * Use shortcut from list
      */
     public void useShortcut(Shortcut shortcut) {
-        if(!isRobotInitialized()) return;
+        if(robot == null) return;
 
         String[] keys = shortcut.name().toUpperCase().split("_");
         if (keys[0].equals("CTRL")) keys[0] = "CONTROL";
@@ -73,19 +73,23 @@ public class SystemInput {
     }
 
     private void pressKeys(int[] keys) {
+        if (robot == null) return;
+
         for (int key : keys) {
             robot.keyPress(key);
         }
     }
 
     private void releaseKeys(int[] keys) {
+        if (robot == null) return;
+
         for (int key : keys) {
             robot.keyRelease(key);
         }
     }
 
     public void mouseClick(MouseButton button) {
-        if (!isRobotInitialized()) return;
+        if (robot == null) return;
 
         int buttonKey;
 
@@ -105,7 +109,7 @@ public class SystemInput {
      * @param button 1 = LPM, 2 = SCROLL_WHEEL, 3 = PPM
      */
     public void mouseClick(int button) {
-        if (!isRobotInitialized()) return;
+        if (robot == null) return;
 
         int buttonKey;
         switch (button) {
@@ -132,11 +136,9 @@ public class SystemInput {
      * Moves mouse from current location by x, y
      */
     public void mouseMove(int x, int y) {
+        if (robot == null) return;
         Point currentPosition = MouseInfo.getPointerInfo().getLocation();
         robot.mouseMove(x + currentPosition.x,y + currentPosition.y);
     }
 
-    private boolean isRobotInitialized() {
-        return robot == null ? false : true;
-    }
 }
