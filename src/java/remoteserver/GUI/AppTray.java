@@ -1,12 +1,18 @@
-package org.remoteserver;
+package remoteserver.GUI;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
 
 public final class AppTray {
 
     private static final SystemTray tray = SystemTray.getSystemTray();
-    private static final String imagePath = "tray-icon.png";
+    private static final String imagePath = System.getProperty("user.dir") + "\\src\\resources\\tray-icon.png";
     private static TrayIcon trayIcon;
     private static boolean isRunning = false;
 

@@ -1,8 +1,12 @@
-package org.remoteserver;
+package remoteserver.SystemControl;
 
-import org.remoteserver.exceptions.RobotException;
+import java.awt.AWTException;
+import java.awt.AWTKeyStroke;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Robot;
+import remoteserver.SystemControl.exceptions.RobotException;
 
-import java.awt.*;
 import java.awt.event.InputEvent;
 
 

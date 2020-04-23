@@ -1,4 +1,4 @@
-package org.remoteserver;
+package remoteserver.SystemControl;
 
 public class CmdParameter {
     private final char[] allowedParameters = { 'l', 's', 'r', 'a', 'h', 't'};

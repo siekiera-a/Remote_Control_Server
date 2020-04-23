@@ -1,4 +1,6 @@
-package org.remoteserver;
+package remoteserver;
+
+import remoteserver.GUI.AppTray;
 
 public class Main {
 

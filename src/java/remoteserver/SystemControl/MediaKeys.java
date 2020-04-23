@@ -1,11 +1,14 @@
-package org.remoteserver;
+package remoteserver.SystemControl;
 
+/**
+ * @TODO recompile C file with correct function name
+ */
 public final class MediaKeys {
 
     private MediaKeys() {}
 
     static {
-        System.load(System.getProperty("user.dir") + "\\src\\MediaKeys.dll");
+        System.load(System.getProperty("user.dir") + "\\src\\native\\MediaKeys.dll");
     }
 
     public static native void volumeUp();

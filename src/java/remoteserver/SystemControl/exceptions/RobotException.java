@@ -1,4 +1,4 @@
-package org.remoteserver.exceptions;
+package remoteserver.SystemControl.exceptions;
 
 public class RobotException extends Exception {
 

@@ -1,4 +1,4 @@
-package org.remoteserver;
+package remoteserver.SystemControl;
 
 public class SystemControl {
 
