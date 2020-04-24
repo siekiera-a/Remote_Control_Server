@@ -2,7 +2,6 @@ package remoteserver.GUI;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-import java.awt.AWTException;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.MenuItem;
@@ -42,13 +41,9 @@ public final class AppTray {
             throw new Exception();
         }
 
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            PopupMenu menu = createMenu();
-            initTray(menu);
-        } catch (Exception e) {
-            throw e;
-        }
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        PopupMenu menu = createMenu();
+        initTray(menu);
     }
 
     private PopupMenu createMenu() {
@@ -61,13 +56,11 @@ public final class AppTray {
     }
 
     private MenuItem[] createMenuItems() {
-        // Menu Items
         MenuItem close = new MenuItem("Close");
         MenuItem about = new MenuItem("About");
         MenuItem connectedDevices = new MenuItem("Connected devices");
 
-        // TODO: implement app window with connected devices && close app properly
-        // Event binding
+        // TODO: change event listeners
         close.addActionListener(e -> System.exit(1));
         about.addActionListener(e -> JOptionPane.showMessageDialog(
             null,
@@ -76,22 +69,17 @@ public final class AppTray {
         );
 
         // the order matters when we display items
-        MenuItem[] items = {connectedDevices, about, close};
-        return items;
+        return new MenuItem[]{connectedDevices, about, close};
     }
 
     private void initTray(PopupMenu menu) throws Exception {
-        try {
-            Image image = Toolkit.getDefaultToolkit().getImage(imagePath);
-            trayIcon = new TrayIcon(image, tooltip, menu);
-            trayIcon.setImageAutoSize(true);
-            tray.add(trayIcon);
+        Image image = Toolkit.getDefaultToolkit().getImage(imagePath);
+        trayIcon = new TrayIcon(image, tooltip, menu);
+        trayIcon.setImageAutoSize(true);
+        tray.add(trayIcon);
 
-            // TODO: implement app window with connected devices
-            trayIcon.addActionListener(e -> JOptionPane.showMessageDialog(null, "Not implemented yet"));
-        } catch (Exception e) {
-            throw e;
-        }
+        // TODO: implement app window with connected devices
+        trayIcon.addActionListener(e -> JOptionPane.showMessageDialog(null, "Not implemented yet"));
     }
 
 }
