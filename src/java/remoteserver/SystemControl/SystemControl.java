@@ -29,9 +29,9 @@ public class SystemControl {
     }
 
     public boolean shutdownWithDelay(int delay) {
-        CmdParameter parameter1 = new CmdParameter('s');
-        CmdParameter parameter2 = new CmdParameter('t', delay);
-        return shutdownCommand(new CmdParameter[] {parameter1, parameter2});
+        ConsoleParameter parameter1 = new ConsoleParameter('s');
+        ConsoleParameter parameter2 = new ConsoleParameter('t', delay);
+        return shutdownCommand(new ConsoleParameter[] {parameter1, parameter2});
     }
 
     public boolean lock() {
@@ -43,12 +43,12 @@ public class SystemControl {
         }
     }
 
-    private boolean shutdownCommand(CmdParameter[] parameters) {
+    private boolean shutdownCommand(ConsoleParameter[] parameters) {
         if (runtime != null && parameters.length > 0) {
             try {
                 String params = "";
-                for (CmdParameter parameter : parameters) {
-                    if (parameter.isValidParameter()) {
+                for (ConsoleParameter parameter : parameters) {
+                    if (parameter.isValid()) {
                         params += " " + parameter.toString();
                     }
                 }
@@ -62,7 +62,7 @@ public class SystemControl {
     }
 
     private boolean execCommandWithOneParameter(char parameter) {
-        CmdParameter param = new CmdParameter(parameter);
-        return shutdownCommand(new CmdParameter[] {param});
+        ConsoleParameter param = new ConsoleParameter(parameter);
+        return shutdownCommand(new ConsoleParameter[] {param});
     }
 }
