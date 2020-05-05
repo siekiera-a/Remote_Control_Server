@@ -13,7 +13,10 @@ public class SimpleTokenImpl implements Token {
 
     @NonNull
     private final String secret;
+
     private Function<String, String> decrypter;
+
+    private volatile boolean displayed;
 
     @Override
     public boolean validate(String secret) {
@@ -24,11 +27,20 @@ public class SimpleTokenImpl implements Token {
         return this.secret.equals(secret);
     }
 
+    /**
+     * Show auth popup if not displayed yet
+     */
     @Override
     public void showAuthPopup() {
-        JOptionPane.showMessageDialog(null,
-            "Code: " + secret, "Auth Popup",
-            JOptionPane.INFORMATION_MESSAGE);
+        new Thread(() -> {
+            if (!displayed) {
+                displayed = true;
+                JOptionPane.showMessageDialog(null,
+                    "Code: " + secret, "Auth Popup",
+                    JOptionPane.INFORMATION_MESSAGE);
+                displayed = false;
+            }
+        }).start();
     }
 
 }
