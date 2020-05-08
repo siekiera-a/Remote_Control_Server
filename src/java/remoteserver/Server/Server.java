@@ -3,17 +3,24 @@ package remoteserver.Server;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.Singular;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import remoteserver.Server.Authentication.AuthenticationService;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Value
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.NONE)
 public class Server implements Runnable {
 
     public final static int MAX_QUEUE_SIZE = 50;
@@ -32,6 +39,10 @@ public class Server implements Runnable {
 
     @NonFinal
     boolean running;
+
+    @NonFinal
+    @Getter(AccessLevel.NONE)
+    ServerSocket server;
 
     // set of mac and ip addresses
     Set<String> blacklist;
@@ -57,11 +68,39 @@ public class Server implements Runnable {
 
     @Override
     public void run() {
+        running = true;
+        ExecutorService pool = Executors.newFixedThreadPool(queueSize);
+
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            server = serverSocket;
+            while (running) {
+                Socket client = server.accept();
+                pool.submit(() -> authenticate(client));
+            }
+        } catch (SocketException e) {
+            System.err.println("Closing server!");
+        } catch (IOException e) {
+            System.err.println("Couldn't start server on port " + port);
+        } finally {
+            pool.shutdown();
+        }
+    }
+
+    private void authenticate(Socket socket) {
         // TODO
+
     }
 
     public void stop() {
-        // TODO
+        running = false;
+
+        if (server != null && !server.isClosed()) {
+            try {
+                server.close();
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+        }
     }
 
     public void forbid(String address) {
@@ -76,4 +115,7 @@ public class Server implements Runnable {
         }
     }
 
+    public Set<String> getBlacklist() {
+        return new HashSet<>(blacklist);
+    }
 }
