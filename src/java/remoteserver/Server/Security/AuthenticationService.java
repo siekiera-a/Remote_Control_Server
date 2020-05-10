@@ -1,4 +1,4 @@
-package remoteserver.Server.Authentication;
+package remoteserver.Server.Security;
 
 @FunctionalInterface
 public interface AuthenticationService {

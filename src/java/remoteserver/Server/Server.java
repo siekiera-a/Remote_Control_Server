@@ -8,8 +8,8 @@ import lombok.NonNull;
 import lombok.Singular;
 import lombok.Value;
 import lombok.experimental.NonFinal;
-import remoteserver.Server.Authentication.AuthenticationService;
-import remoteserver.Server.Authentication.Token;
+import remoteserver.Server.Security.AuthenticationService;
+import remoteserver.Server.Security.Token;
 
 import java.io.BufferedReader;
 import java.io.IOException;
