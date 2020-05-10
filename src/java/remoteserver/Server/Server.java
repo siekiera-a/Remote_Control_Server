@@ -9,8 +9,16 @@ import lombok.Singular;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import remoteserver.Server.Authentication.AuthenticationService;
+import remoteserver.Server.Authentication.Token;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -47,11 +55,16 @@ public class Server implements Runnable {
     // set of mac and ip addresses
     Set<String> blacklist;
 
+    int maxAuthAttempts = 3;
+
+    int bufferSize = 1024;
+
     @Builder
     private Server(@NonNull AuthenticationService auth, @Singular("ban") Set<String> blacklist,
                    int queueSize, int maxConnectedDevices, int port) {
         this.auth = auth;
         this.blacklist = new HashSet<>(blacklist);
+        this.blacklist.remove(null);
 
         if (queueSize >= MIN_QUEUE_SIZE && queueSize <= MAX_QUEUE_SIZE) {
             this.queueSize = queueSize;
@@ -86,9 +99,70 @@ public class Server implements Runnable {
         }
     }
 
-    private void authenticate(Socket socket) {
-        // TODO
+    private boolean isOnBlackList(Socket socket) {
+        return blacklist.contains(((InetSocketAddress) socket.getRemoteSocketAddress()).getHostString());
+    }
 
+    private String read(Reader reader) throws IOException {
+        char[] buffer = new char[bufferSize];
+        int read = reader.read(buffer);
+        return new String(buffer, 0, read);
+    }
+
+    private void write(Writer writer, int c) throws IOException {
+        writer.write(c);
+        writer.flush();
+    }
+
+    private void authenticate(Socket socket) {
+        if (isOnBlackList(socket)) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        BufferedReader reader = null;
+        PrintWriter writer = null;
+
+        try {
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+            Token token = auth.createToken();
+            boolean authenticated = false;
+            for (int i = 0; i < maxAuthAttempts && !authenticated; i++) {
+                String secret = read(reader);
+                if (token.validate(secret)) {
+                    authenticated = true;
+                } else {
+                    // write 0 to the client if authentication fails
+                    write(writer, 0);
+                }
+            }
+
+            if (authenticated) {
+                // write 1 to the client if authentication succeeds
+                write(writer, 1);
+                // TODO create user
+            } else {
+                reader.close();
+                writer.close();
+                socket.close();
+            }
+        } catch (IOException e) {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+                if (writer != null) {
+                    writer.close();
+                }
+                socket.close();
+            } catch (IOException er) {
+                er.printStackTrace();
+            }
+        }
     }
 
     public void stop() {
